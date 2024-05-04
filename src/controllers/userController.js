@@ -3,7 +3,8 @@ import userService from '../services/userService.js'
 class UserController {
    async create(req, res) {
       try {
-         const user = userService.create(req, res)
+         const { login, password } = req.body;
+         const user = await userService.create(login, password)
          res.json(user);
       } catch (e) {
          res.status(500).json(e)
@@ -12,9 +13,11 @@ class UserController {
 
    async login(req, res) {
       try {
-         const user = userService.login(req, res)
-         res.json(user);
+         const { login, password } = req.body;
+         const user = await userService.login(login, password)
+         return res.json(user);
       } catch (e) {
+         console.log(e)
          res.status(500).json(e)
       }
    }
