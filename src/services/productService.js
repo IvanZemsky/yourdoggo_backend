@@ -6,6 +6,11 @@ class ProductService {
       return products
    }
 
+   async getById(id) {
+      const product = await Product.findById(id);
+      return product
+   }
+
    async getByCategory(category) {
       const products = await Product.find({category});
       console.log(category)
