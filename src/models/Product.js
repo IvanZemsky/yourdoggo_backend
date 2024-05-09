@@ -4,7 +4,8 @@ const Product = new Schema({
    name: {type: String, require: true},
    description: {type: String, require: true},
    category: {type: String, require: true},
-   price: {type: Number, require: true}
+   price: {type: Number, require: true},
+   details: {type: Object},
 })
 
 export default model('Product', Product)
