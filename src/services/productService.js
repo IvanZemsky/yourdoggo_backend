@@ -18,6 +18,7 @@ class ProductService {
       
       if (params.minPrice || params.maxPrice) {
          query.price = {};
+         
          if (params.minPrice) {
             query.price.$gte = +params.minPrice;
          }
@@ -37,8 +38,13 @@ class ProductService {
 
    async getByCategory(category) {
       const products = await Product.find({category});
-      console.log(category)
       return products
+   }
+
+   async getByIds(ids) {
+      console.log(ids)
+      const products = await Product.find({ _id: { $in: ids } });
+      return products;
    }
 }
 

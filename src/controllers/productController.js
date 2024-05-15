@@ -27,6 +27,15 @@ class ProductController {
          res.status(500).json(e)
       }
    }
+
+   async getByIds(req, res) {
+      try {
+         const products = await productService.getByIds(req.body.ids)
+         return res.json(products)
+      } catch (e) {
+         res.status(500).json(e)
+      } 
+   }
 }
 
 export default new ProductController()
