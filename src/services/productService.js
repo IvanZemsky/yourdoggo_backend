@@ -42,7 +42,6 @@ class ProductService {
    }
 
    async getByIds(ids) {
-      console.log(ids)
       const products = await Product.find({ _id: { $in: ids } });
       return products;
    }
