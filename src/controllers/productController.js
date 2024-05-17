@@ -21,7 +21,7 @@ class ProductController {
 
    async getByCategory(req, res) {
       try {
-         const products = await productService.getByCategory(req.params.category)
+         const products = await productService.getByCategory(req.params.category, req.query)
          return res.json(products)
       } catch (e) {
          res.status(500).json(e)

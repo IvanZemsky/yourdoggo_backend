@@ -2,7 +2,7 @@ import Product from '../models/Product.js'
 
 class ProductService {
    async getAll(params) {
-      let query = {};
+      const query = {};
       
       if (params.search) {
          const searchString = params.search;
@@ -27,6 +27,10 @@ class ProductService {
          }
       }
 
+      if (params.excludeId) {
+         query._id = {$ne: params.excludeId}
+      }
+
       const products = await Product.find(query);
       return products;
    }
@@ -36,8 +40,16 @@ class ProductService {
       return product
    }
 
-   async getByCategory(category) {
-      const products = await Product.find({category});
+   async getByCategory(category, params) {
+      const query = {}
+
+      query.category = category
+
+      if (params.excludeId) {
+         query._id = {$ne: params.excludeId}
+      }
+
+      const products = await Product.find(query);
       return products
    }
 
