@@ -1,37 +1,16 @@
-import User from "../models/User.js";
+import User from '../models/User.js'
 
 class UserService {
-   async create(login, password) {
-      try {
-         const candidate = await User.findOne({ login });
-         if (candidate) {
-            return {errorMessage: "USER_EXISTS_ERROR"};
-         }
-
-         const user = new User({ login, password });
-         await user.save();
-
-         return { message: "REGISTRATION_SUCCESS" };
-      } catch (e) {
-         res.status(400).json({
-            errorMessage: "REGISTRATION_ERROR",
-         });
-      }
+   async getAll(params) {
+      const query = {};
+      const products = await User.find(query);
+      return products;
    }
 
-   async login(login, password) {
-      const user = await User.findOne({ login });
-
-      if (!user) {
-         return { errorMessage: "LOGIN_ERROR" };
-      }
-
-      if (password !== user.password) {
-         return { errorMessage: "PASSWORD_ERROR" };
-      }
-
-      return {id: user._id, login: user.login}
+   async getById(id) {
+      const product = await User.findById(id);
+      return product
    }
 }
 
-export default new UserService();
+export default new UserService()

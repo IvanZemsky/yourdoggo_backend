@@ -1,23 +1,20 @@
-import userService from '../services/userService.js'
+import userService from "../services/userService.js"
 
 class UserController {
-   async create(req, res) {
+   async getAll(req, res) {
       try {
-         const { login, password } = req.body;
-         const user = await userService.create(login, password)
-         res.json(user);
+         const users = await userService.getAll(req.query)
+         return res.json(users)
       } catch (e) {
          res.status(500).json(e)
       }
    }
 
-   async login(req, res) {
+   async getById(req, res) {
       try {
-         const { login, password } = req.body;
-         const user = await userService.login(login, password)
-         return res.json(user);
+         const user = await userService.getById(req.params.id)
+         return res.json(user)
       } catch (e) {
-         console.log(e)
          res.status(500).json(e)
       }
    }
