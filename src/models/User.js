@@ -6,7 +6,10 @@ const User = new Schema({
    name: {type: String},
    surname: {type: String},
    hasCard: {type: Boolean, require: true},
-   postOfficeAddress: {type: String}
+   email: {type: String},
+   phone: {type: String},
+   registrationDate: {type: Date},
+   postOfficeAddress: {type: String},
 })
 
 export default model('User', User)
