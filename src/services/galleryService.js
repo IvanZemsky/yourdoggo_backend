@@ -4,6 +4,7 @@ class GalleryService {
    async getAll(params) {
       const query = {};
       const limit = +params.limit || 0
+      const sort = params.sortByDate ? {datetime: -1} : {}
 
       if (params.search) {
          const searchRegex = new RegExp(params.search, 'i');
@@ -17,7 +18,7 @@ class GalleryService {
          const images = await GalleryImg.find(query).populate(
             "userId",
             "login"
-         ).limit(limit);
+         ).limit(limit).sort(sort);
          const transformedImages = images.map((image) => {
             return {
                ...image._doc,
@@ -27,7 +28,7 @@ class GalleryService {
          });
          return transformedImages;
       } else {
-         const images = await GalleryImg.find(query).limit(limit);
+         const images = await GalleryImg.find(query).limit(limit).sort(sort);
          return images;
       }
    }
