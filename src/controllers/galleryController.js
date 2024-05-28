@@ -27,6 +27,16 @@ class GalleryController {
          res.status(500).json(e)
       }
    }
+
+   async toggleLike(req, res) {
+      try {
+         console.log(req.body)
+         const like = await galleryService.toggleLike(req.body.userId, req.body.galleryimgId)
+         return res.json(like)
+      } catch (e) {
+         res.status(500).json(e)
+      }
+   }
 }
 
 export default new GalleryController()
