@@ -6,30 +6,47 @@ class GalleryService {
       const query = {};
       const limit = +params.limit || 0;
       const sort = params.sortByDate ? { datetime: -1 } : {};
-
+    
       if (params.search) {
-         const searchRegex = new RegExp(params.search, "i");
-         query.$or = [{ title: searchRegex }, { tags: searchRegex }];
+        const searchRegex = new RegExp(params.search, "i");
+        query.$or = [{ title: searchRegex }, { tags: searchRegex }];
       }
-
+    
+      const userId = params.userId ? mongoose.Types.ObjectId(params.userId) : null;
+    
+      let images = [];
+    
       if (params.userLogin) {
-         const images = await GalleryImg.find(query)
-            .populate("userId", "login")
-            .limit(limit)
-            .sort(sort);
-         const transformedImages = images.map((image) => {
-            return {
-               ...image._doc,
-               userId: image.userId._id,
-               login: image.userId.login,
-            };
-         });
-         return transformedImages;
+        images = await GalleryImg.find(query)
+          .populate("userId", "login")
+          .limit(limit)
+          .sort(sort);
+    
+        images = images.map((image) => {
+          return {
+            ...image._doc,
+            userId: image.userId._id,
+            login: image.userId.login,
+          };
+        });
       } else {
-         const images = await GalleryImg.find(query).limit(limit).sort(sort);
-         return images;
+        images = await GalleryImg.find(query).limit(limit).sort(sort);
       }
-   }
+    
+      if (userId) {
+        const likes = await GalleryLike.find({ userId });
+        const likedImageIds = new Set(likes.map((like) => like.galleryimgId.toString()));
+    
+        images = images.map((image) => {
+          return {
+            ...image._doc,
+            isLiked: likedImageIds.has(image._id.toString()),
+          };
+        });
+      }
+    
+      return images;
+    }
 
    async getById(id) {
       const image = await GalleryImg.findById(id);
