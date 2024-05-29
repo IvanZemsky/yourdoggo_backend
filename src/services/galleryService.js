@@ -6,13 +6,12 @@ class GalleryService {
       const query = {};
       const limit = +params.limit || 0;
       const sort = params.sortByDate ? { datetime: -1 } : {};
+      const authUserId = params.userId ? params.userId : null;
     
       if (params.search) {
         const searchRegex = new RegExp(params.search, "i");
         query.$or = [{ title: searchRegex }, { tags: searchRegex }];
       }
-    
-      const userId = params.userId ? mongoose.Types.ObjectId(params.userId) : null;
     
       let images = [];
     
@@ -22,27 +21,32 @@ class GalleryService {
           .limit(limit)
           .sort(sort);
     
-        images = images.map((image) => {
-          return {
-            ...image._doc,
-            userId: image.userId._id,
-            login: image.userId.login,
-          };
-        });
+        images = images.map((image) => ({
+          ...image._doc,
+          userId: image.userId._id,
+          login: image.userId.login,
+        }));
       } else {
         images = await GalleryImg.find(query).limit(limit).sort(sort);
+    
+        images = images.map((image) => ({
+          ...image._doc,
+        }));
       }
     
-      if (userId) {
-        const likes = await GalleryLike.find({ userId });
+      if (authUserId) {
+        const likes = await GalleryLike.find({ userId: authUserId });
         const likedImageIds = new Set(likes.map((like) => like.galleryimgId.toString()));
     
-        images = images.map((image) => {
-          return {
-            ...image._doc,
-            isLiked: likedImageIds.has(image._id.toString()),
-          };
-        });
+        images = images.map((image) => ({
+          ...image,
+          isLiked: likedImageIds.has(image._id.toString()),
+        }));
+      } else {
+        images = images.map((image) => ({
+          ...image,
+          isLiked: false,
+        }));
       }
     
       return images;
