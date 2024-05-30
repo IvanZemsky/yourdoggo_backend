@@ -5,8 +5,9 @@ import productRouter from "./src/routes/products.js";
 import cors from 'cors'
 import galleryRouter from "./src/routes/gallery.js";
 import userRouter from "./src/routes/users.js";
+import articleRouter from "./src/routes/articles.js";
 
-const PORT = process.env.PORT || 5000
+const PORT = process.env.PORT || 5100
 const USER = process.env.USER
 const PASSWORD = process.env.PASSWORD
 const DB_NAME = "yourdoggo"
@@ -20,6 +21,7 @@ app.use(authRouter)
 app.use(userRouter)
 app.use(productRouter)
 app.use(galleryRouter)
+app.use(articleRouter)
 
 const start = async () => {
    try {
