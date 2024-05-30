@@ -3,7 +3,8 @@ import galleryService from "../services/galleryService.js"
 class GalleryController {
    async getAll(req, res) {
       try {
-         const images = await galleryService.getAll(req.query)
+         const authUserId = req.body.authUserId || null
+         const images = await galleryService.getAll(authUserId, req.query)
          return res.json(images)
       } catch (e) {
          res.status(500).json(e)
@@ -33,16 +34,6 @@ class GalleryController {
          console.log(req.body)
          const like = await galleryService.toggleLike(req.body.userId, req.body.galleryimgId)
          return res.json(like)
-      } catch (e) {
-         res.status(500).json(e)
-      }
-   }
-
-   async getLiked(req, res) {
-      try {
-         const userId = req.body.userId
-         const images = await galleryService.getLiked(userId, req.query)
-         return res.json(images)
       } catch (e) {
          res.status(500).json(e)
       }
