@@ -37,6 +37,16 @@ class GalleryController {
          res.status(500).json(e)
       }
    }
+
+   async getLiked(req, res) {
+      try {
+         const userId = req.body.userId
+         const images = await galleryService.getLiked(userId, req.query)
+         return res.json(images)
+      } catch (e) {
+         res.status(500).json(e)
+      }
+   }
 }
 
 export default new GalleryController()
