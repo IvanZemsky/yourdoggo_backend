@@ -35,10 +35,10 @@ class ArticleService {
       }
 
       if (authUserId) {
-         const likes = await GalleryLike.find({ userId: authUserId });
+         const likes = await ArticleLike.find({ userId: authUserId });
          console.log(likes)
          const likedArticleIds = new Set(
-            likes.map((like) => like.galleryimgId.toString())
+            likes.map((like) => like.articleId.toString())
          );
 
          articles = articles.map((article) => ({
