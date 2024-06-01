@@ -59,8 +59,41 @@ class ArticleService {
       return articles;
    }
 
-   async getById(id) {
-      const article = await Article.findById(id);
+   async getById(id, authUserId, queryParams) {
+      let article = {};
+
+      if (queryParams.userLogin) {
+         article = await Article.findById(id)
+            .populate("userId", "login")
+
+         article = {
+            ...article._doc,
+            userId: article.userId._id,
+            login: article.userId.login,
+         };
+      } else {
+         article = await Article.findById(id)
+      }
+
+      if (authUserId) {
+         const likes = await ArticleLike.find({ userId: authUserId });
+         console.log(likes)
+         const likedArticleIds = new Set(
+            likes.map((like) => like.articleId.toString())
+         );
+         console.log(likedArticleIds)
+
+         article = {
+            ...article,
+            isLiked: likedArticleIds.has(id),
+         };
+      } else {
+         article = {
+            ...article,
+            isLiked: false,
+         };
+      }
+
       return article;
    }
 

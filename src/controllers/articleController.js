@@ -1,6 +1,6 @@
 import articleService from "../services/articleService.js"
 
-class GalleryController {
+class ArticleController {
    async getAll(req, res) {
       try {
          const authUserId = req.body.authUserId || null
@@ -13,8 +13,8 @@ class GalleryController {
 
    async getById(req, res) {
       try {
-         const articles = await articleService.getById(req.params.id)
-         return res.json(articles)
+         const article = await articleService.getById(req.params.id, req.body.authUserId, req.query)
+         return res.json(article)
       } catch (e) {
          res.status(500).json(e)
       }
@@ -22,7 +22,7 @@ class GalleryController {
 
    async getByUserId(req, res) {
       try {
-         const articles = await articleService.getByUserId(req.params.userId, req.query)
+         const articles = await articleService.getByUserId(req.params.userId)
          return res.json(articles)
       } catch (e) {
          res.status(500).json(e)
@@ -40,4 +40,4 @@ class GalleryController {
    }
 }
 
-export default new GalleryController()
+export default new ArticleController()
