@@ -68,30 +68,27 @@ class ArticleService {
 
          article = {
             ...article._doc,
-            userId: article.userId._id,
-            login: article.userId.login,
+            userId: article._doc.userId._id,
+            login: article._doc.userId.login,
          };
       } else {
          article = await Article.findById(id)
+         article = article._doc
       }
 
+      let isLiked = false;
       if (authUserId) {
-         const likes = await ArticleLike.find({ userId: authUserId });
-         console.log(likes)
-         const likedArticleIds = new Set(
-            likes.map((like) => like.articleId.toString())
-         );
-
-         article = {
-            ...article._doc,
-            isLiked: likedArticleIds.has(id),
-         };
-      } else {
-         article = {
-            ...article._doc,
-            isLiked: false,
-         };
+          const likes = await ArticleLike.find({ userId: authUserId });
+          const likedArticleIds = new Set(likes.map((like) => like.articleId.toString()));
+          isLiked = likedArticleIds.has(id);
       }
+
+      article = {
+         ...article,
+         isLiked
+      }
+
+      console.log(article)
 
       return article;
    }
