@@ -84,12 +84,12 @@ class ArticleService {
          console.log(likedArticleIds)
 
          article = {
-            ...article,
+            ...article._doc,
             isLiked: likedArticleIds.has(id),
          };
       } else {
          article = {
-            ...article,
+            ...article._doc,
             isLiked: false,
          };
       }

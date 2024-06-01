@@ -7,7 +7,7 @@ const Article = new Schema({
    userId: { type: Schema.Types.ObjectId, require: true, ref: "User" },
    datetime: {type: Date, require: true},
    text: {type: String},
-   likes: {type: Number}
+   likes: {type: Number, default: 0}
 });
 
 
