@@ -81,7 +81,6 @@ class ArticleService {
          const likedArticleIds = new Set(
             likes.map((like) => like.articleId.toString())
          );
-         console.log(likedArticleIds)
 
          article = {
             ...article._doc,

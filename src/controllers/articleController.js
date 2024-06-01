@@ -31,7 +31,6 @@ class ArticleController {
 
    async toggleLike(req, res) {
       try {
-         console.log(req.body)
          const like = await articleService.toggleLike(req.body.userId, req.body.articleId)
          return res.json(like)
       } catch (e) {

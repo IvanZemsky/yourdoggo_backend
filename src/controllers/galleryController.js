@@ -31,7 +31,6 @@ class GalleryController {
 
    async toggleLike(req, res) {
       try {
-         console.log(req.body)
          const like = await galleryService.toggleLike(req.body.userId, req.body.galleryimgId)
          return res.json(like)
       } catch (e) {
