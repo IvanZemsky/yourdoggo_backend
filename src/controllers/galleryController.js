@@ -3,9 +3,19 @@ import galleryService from "../services/galleryService.js"
 class GalleryController {
    async getAll(req, res) {
       try {
-         const authUserId = req.body.authUserId || null
+         const {authUserId} = req.body.authUserId || null
          const images = await galleryService.getAll(authUserId, req.query)
          return res.json(images)
+      } catch (e) {
+         res.status(500).json(e)
+      }
+   }
+
+   async create(req, res) {
+      try {
+         const {title, imgLink, tags, userId} = req.body
+         const image = await galleryService.create({title, imgLink, tags, userId})
+         return res.json(image)
       } catch (e) {
          res.status(500).json(e)
       }

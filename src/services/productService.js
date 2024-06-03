@@ -2,6 +2,8 @@ import Product from '../models/Product.js'
 
 class ProductService {
    async getAll(params) {
+      const limit = +params.limit || 0
+      const page = +params.page || 1
       const query = {};
       
       if (params.search) {
@@ -31,7 +33,7 @@ class ProductService {
          query._id = {$ne: params.excludeId}
       }
 
-      const products = await Product.find(query);
+      const products = await Product.find(query).limit(limit).skip((page - 1) * limit);
       return products;
    }
 

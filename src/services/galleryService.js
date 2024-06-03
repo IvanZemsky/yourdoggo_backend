@@ -4,8 +4,9 @@ import GalleryLike from "../models/GalleryLike.js";
 class GalleryService {
    async getAll(authUserId, queryParams) {
       const query = {};
-      const limit = +queryParams.limit || 0;
-      const sort = queryParams.sortByDate ? { datetime: -1 } : {};
+      const limit = +queryParams.limit || 0
+      const page = +queryParams.page || 1
+      const sort = queryParams.sortByDate ? { datetime: -1 } : {}
       const liked = queryParams.liked
 
       if (queryParams.search) {
@@ -19,6 +20,7 @@ class GalleryService {
          images = await GalleryImg.find(query)
             .populate("userId", "login")
             .limit(limit)
+            .skip((page - 1) * limit)
             .sort(sort);
 
          images = images.map((image) => ({
@@ -27,7 +29,7 @@ class GalleryService {
             login: image.userId.login,
          }));
       } else {
-         images = await GalleryImg.find(query).limit(limit).sort(sort);
+         images = await GalleryImg.find(query).limit(limit).skip((page - 1) * limit).sort(sort);
 
          images = images.map((image) => ({
             ...image._doc,
@@ -58,6 +60,12 @@ class GalleryService {
 
       return images;
    }
+
+   async create(imageData) {
+      const image = new GalleryImg(imageData);
+      await image.save();
+      return image;
+    }
 
    async getById(id) {
       const image = await GalleryImg.findById(id);

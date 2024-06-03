@@ -59,6 +59,12 @@ class ArticleService {
       return articles;
    }
 
+   async create(articleInfo) {
+      const article = new Article(articleInfo);
+      await article.save();
+      return article;
+   }
+
    async getById(id, authUserId, queryParams) {
       let article = {};
 

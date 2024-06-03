@@ -3,6 +3,7 @@ import galleryController from "../controllers/galleryController.js"
 
 const galleryRouter = new Router()
 
+galleryRouter.post('/gallery/create', galleryController.create)
 galleryRouter.post('/gallery', galleryController.getAll)
 galleryRouter.get('/gallery/:id', galleryController.getById)
 galleryRouter.get('/gallery/users/:userId', galleryController.getByUserId)
