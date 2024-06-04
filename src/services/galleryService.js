@@ -2,12 +2,13 @@ import GalleryImg from "../models/GalleryImg.js";
 import GalleryLike from "../models/GalleryLike.js";
 
 class GalleryService {
-   async getAll(authUserId, queryParams) {
+   async getAll(body, queryParams) {
       const query = {};
       const limit = +queryParams.limit || 0
       const page = +queryParams.page || 1
       const sort = queryParams.sortByDate ? { datetime: -1 } : {}
       const liked = queryParams.liked
+      const authUserId = body.authUserId
 
       if (queryParams.search) {
          const searchRegex = new RegExp(queryParams.search, "i");
@@ -38,7 +39,6 @@ class GalleryService {
 
       if (authUserId) {
          const likes = await GalleryLike.find({ userId: authUserId });
-         console.log(likes)
          const likedImageIds = new Set(
             likes.map((like) => like.galleryimgId.toString())
          );
@@ -58,7 +58,7 @@ class GalleryService {
          images = images.filter(image => image.isLiked === true)
       }
 
-      const totalCount = await GalleryImg.countDocuments();
+      const totalCount = await GalleryImg.countDocuments(query);
 
       return {images, totalCount};
 

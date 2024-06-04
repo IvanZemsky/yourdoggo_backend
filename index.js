@@ -7,7 +7,7 @@ import galleryRouter from "./src/routes/gallery.js";
 import userRouter from "./src/routes/users.js";
 import articleRouter from "./src/routes/articles.js";
 
-const PORT = process.env.PORT || 5200
+const PORT = process.env.PORT || 5100
 const USER = process.env.USER
 const PASSWORD = process.env.PASSWORD
 const DB_NAME = "yourdoggo"

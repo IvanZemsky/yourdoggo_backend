@@ -35,7 +35,7 @@ class ProductService {
 
       const products = await Product.find(query).limit(limit).skip((page - 1) * limit);
 
-      const totalCount = await Product.countDocuments();
+      const totalCount = await Product.countDocuments(query);
 
       return {products, totalCount};
    }

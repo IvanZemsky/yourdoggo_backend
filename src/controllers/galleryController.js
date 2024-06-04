@@ -3,8 +3,7 @@ import galleryService from "../services/galleryService.js"
 class GalleryController {
    async getAll(req, res) {
       try {
-         const {authUserId} = req.body.authUserId || null
-         const {images, totalCount} = await galleryService.getAll(authUserId, req.query)
+         const {images, totalCount} = await galleryService.getAll(req.body, req.query)
          res.set('X-Total-Count', totalCount);
          return res.json(images)
       } catch (e) {
