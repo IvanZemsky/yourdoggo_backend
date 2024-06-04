@@ -14,6 +14,12 @@ const DB_NAME = "yourdoggo"
 const URL = `mongodb+srv://${USER}:${PASSWORD}@cluster0.lgdjinw.mongodb.net/${DB_NAME}?retryWrites=true&w=majority&appName=Cluster0`
 
 const app = express()
+app.use((req, res, next) => {
+   res.header('Access-Control-Allow-Origin', '*'); // Настройте разрешенные источники
+   res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept');
+   res.header('Access-Control-Expose-Headers', 'X-Total-Count'); // Добавьте здесь ваши кастомные заголовки
+   next();
+ });
 
 app.use(cors())
 app.use(express.json())
