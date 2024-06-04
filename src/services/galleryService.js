@@ -58,7 +58,10 @@ class GalleryService {
          images = images.filter(image => image.isLiked === true)
       }
 
-      return images;
+      const totalCount = await GalleryImg.countDocuments();
+
+      return {images, totalCount};
+
    }
 
    async create(imageData) {

@@ -3,7 +3,9 @@ import productService from "../services/productService.js"
 class ProductController {
    async getAll(req, res) {
       try {
-         const products = await productService.getAll(req.query)
+         const {products, totalCount} = await productService.getAll(req.query)
+         res.set('X-Total-Count', totalCount);
+         
          return res.json(products)
       } catch (e) {
          res.status(500).json(e)

@@ -34,7 +34,10 @@ class ProductService {
       }
 
       const products = await Product.find(query).limit(limit).skip((page - 1) * limit);
-      return products;
+
+      const totalCount = await Product.countDocuments();
+
+      return {products, totalCount};
    }
 
    async getById(id) {
