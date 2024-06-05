@@ -13,8 +13,8 @@ class ArticleController {
 
    async create (req, res) {
       try {
-         const {title, text, tags, userId} = req.body
-         const article = await articleService.create({title, text, tags, userId})
+         const {title, imgLink, text, tags, userId} = req.body
+         const article = await articleService.create({title, imgLink, text, tags, userId})
          return res.json(article)
       } catch (e) {
          res.status(500).json(e)
