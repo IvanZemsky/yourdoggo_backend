@@ -3,12 +3,18 @@ import GalleryLike from "../models/GalleryLike.js";
 
 class GalleryService {
    async getAll(body, queryParams) {
-      const query = {};
+      const userId = queryParams.userId || ""
       const limit = +queryParams.limit || 0
       const page = +queryParams.page || 1
       const sort = queryParams.sortByDate ? { datetime: -1 } : {}
       const liked = queryParams.liked
       const authUserId = body.authUserId
+
+      const query = {}
+
+      if (userId) {
+         query.userId = userId
+      }
 
       if (queryParams.search) {
          const searchRegex = new RegExp(queryParams.search, "i");
@@ -20,8 +26,8 @@ class GalleryService {
       if (queryParams.userLogin) {
          images = await GalleryImg.find(query)
             .populate("userId", "login")
-            .limit(limit)
             .skip((page - 1) * limit)
+            .limit(limit)
             .sort(sort);
 
          images = images.map((image) => ({
@@ -30,7 +36,7 @@ class GalleryService {
             login: image.userId.login,
          }));
       } else {
-         images = await GalleryImg.find(query).limit(limit).skip((page - 1) * limit).sort(sort);
+         images = await GalleryImg.find(query).skip((page - 1) * limit).limit(limit).sort(sort);
 
          images = images.map((image) => ({
             ...image._doc,

@@ -30,15 +30,6 @@ class GalleryController {
       }
    }
 
-   async getByUserId(req, res) {
-      try {
-         const images = await galleryService.getByUserId(req.params.userId, req.query)
-         return res.json(images)
-      } catch (e) {
-         res.status(500).json(e)
-      }
-   }
-
    async toggleLike(req, res) {
       try {
          const like = await galleryService.toggleLike(req.body.userId, req.body.galleryimgId)
