@@ -3,23 +3,33 @@ import GalleryLike from "../models/GalleryLike.js";
 
 class GalleryService {
    async getAll(body, queryParams) {
-      const userId = queryParams.userId || ""
-      const limit = +queryParams.limit || 0
-      const page = +queryParams.page || 1
-      const sort = queryParams.sortByDate ? { datetime: -1 } : {}
-      const liked = queryParams.liked
-      const authUserId = body.authUserId
+      const userId = queryParams.userId || "";
+      const limit = +queryParams.limit || 0;
+      const page = +queryParams.page || 1;
+      const sort = queryParams.sortByDate ? { datetime: -1 } : {};
+      const liked = queryParams.liked;
+      const authUserId = body.authUserId;
 
-      const query = {}
+      const query = {};
 
       if (userId) {
-         query.userId = userId
+         query.userId = userId;
       }
 
       if (queryParams.search) {
          const searchRegex = new RegExp(queryParams.search, "i");
          query.$or = [{ title: searchRegex }, { tags: searchRegex }];
       }
+
+      if (liked && authUserId) {
+         const likes = await GalleryLike.find({ userId: authUserId });
+         const likedImageIds = new Set(
+            likes.map((like) => like.galleryimgId.toString())
+         );
+         query._id = { $in: Array.from(likedImageIds) };
+      }
+
+      const totalCount = await GalleryImg.countDocuments(query);
 
       let images = [];
 
@@ -36,7 +46,10 @@ class GalleryService {
             login: image.userId.login,
          }));
       } else {
-         images = await GalleryImg.find(query).skip((page - 1) * limit).limit(limit).sort(sort);
+         images = await GalleryImg.find(query)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort(sort);
 
          images = images.map((image) => ({
             ...image._doc,
@@ -60,14 +73,7 @@ class GalleryService {
          }));
       }
 
-      if (liked && authUserId) {
-         images = images.filter(image => image.isLiked === true)
-      }
-
-      const totalCount = await GalleryImg.countDocuments(query);
-
-      return {images, totalCount};
-
+      return { images, totalCount };
    }
 
    async create(imageData) {

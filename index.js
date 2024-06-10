@@ -6,6 +6,7 @@ import cors from 'cors'
 import galleryRouter from "./src/routes/gallery.js";
 import userRouter from "./src/routes/users.js";
 import articleRouter from "./src/routes/articles.js";
+import forumRouter from "./src/routes/forum.js";
 
 const PORT = process.env.PORT || 5100
 const USER = process.env.USER
@@ -28,6 +29,7 @@ app.use(userRouter)
 app.use(productRouter)
 app.use(galleryRouter)
 app.use(articleRouter)
+app.use(forumRouter)
 
 const start = async () => {
    try {
