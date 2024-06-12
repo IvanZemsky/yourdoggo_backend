@@ -2,22 +2,41 @@ import Article from "../models/Article.js";
 import ArticleLike from '../models/ArticleLike.js'
 
 class ArticleService {
-   async getAll(authUserId, queryParams) {
-      const query = {};
+   async getAll(body, queryParams) {
+      const userId = queryParams.userId || "";
       const limit = +queryParams.limit || 0;
+      const page = +queryParams.page || 1;
       const sort = queryParams.sortByDate ? { datetime: -1 } : {};
-      const liked = queryParams.liked
+      const liked = queryParams.liked;
+      const authUserId = body.authUserId;
+
+      const query = {};
+
+      if (userId) {
+         query.userId = userId;
+      }
 
       if (queryParams.search) {
          const searchRegex = new RegExp(queryParams.search, "i");
          query.$or = [{ title: searchRegex }, { tags: searchRegex }];
       }
 
+      if (liked && authUserId) {
+         const likes = await ArticleLike.find({ userId: authUserId });
+         const likedArticleIds = new Set(
+            likes.map((like) => like.articleId.toString())
+         );
+         query._id = { $in: Array.from(likedArticleIds) };
+      }
+
+      const totalCount = await Article.countDocuments(query);
+
       let articles = [];
 
       if (queryParams.userLogin) {
          articles = await Article.find(query)
             .populate("userId", "login")
+            .skip((page - 1) * limit)
             .limit(limit)
             .sort(sort);
 
@@ -27,7 +46,10 @@ class ArticleService {
             login: article.userId.login,
          }));
       } else {
-         articles = await Article.find(query).limit(limit).sort(sort);
+         articles = await Article.find(query)
+            .skip((page - 1) * limit)
+            .limit(limit)
+            .sort(sort);
 
          articles = articles.map((article) => ({
             ...article._doc,
@@ -36,7 +58,6 @@ class ArticleService {
 
       if (authUserId) {
          const likes = await ArticleLike.find({ userId: authUserId });
-         console.log(likes)
          const likedArticleIds = new Set(
             likes.map((like) => like.articleId.toString())
          );
@@ -52,11 +73,7 @@ class ArticleService {
          }));
       }
 
-      if (liked && authUserId) {
-         articles = articles.filter(article => article.isLiked === true)
-      }
-
-      return articles;
+      return { articles, totalCount };
    }
 
    async create(articleInfo) {

@@ -3,8 +3,8 @@ import articleService from "../services/articleService.js"
 class ArticleController {
    async getAll(req, res) {
       try {
-         const authUserId = req.body.authUserId || null
-         const articles = await articleService.getAll(authUserId, req.query)
+         const {articles, totalCount} = await articleService.getAll(req.body, req.query)
+         res.set('X-Total-Count', totalCount);
          return res.json(articles)
       } catch (e) {
          res.status(500).json(e)
