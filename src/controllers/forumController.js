@@ -24,7 +24,8 @@ class ForumController {
    async create (req, res) {
       try {
          const {title, description, imgLink, userId} = req.body
-         const forummessage = await forumService.create({title, description, imgLink, userId})
+         const datetime = new Date()
+         const forummessage = await forumService.create({title, description, imgLink, userId, datetime})
          return res.json(forummessage)
       } catch (e) {
          res.status(500).json(e)
