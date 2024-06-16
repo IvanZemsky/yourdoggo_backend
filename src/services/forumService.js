@@ -43,13 +43,32 @@ class ForumService {
       return { forummessages, totalCount };
    }
 
-   async getById(id) {
-      const forummessage = await ForumMessage.findById(id);
+   async getById(id, queryParams) {
+      let forummessage = {};
+
+      if (queryParams.userLogin) {
+         forummessage = await ForumMessage.findById(id).populate(
+            "userId",
+            "login"
+         );
+
+         console.log(forummessage)
+
+         forummessage = {
+            ...forummessage._doc,
+            userId: forummessage.userId._id,
+            login: forummessage.userId.login,
+         };
+      } else {
+         forummessage = await ForumMessage.findById(id);
+         forummessage = forummessage._doc;
+      }
+
       return forummessage;
    }
 
-   async create(articleInfo) {
-      const forummessage = new ForumMessage(articleInfo);
+   async create(forumMessageInfo) {
+      const forummessage = new ForumMessage(forumMessageInfo);
       await forummessage.save();
       return forummessage;
    }

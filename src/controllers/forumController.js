@@ -14,7 +14,7 @@ class ForumController {
 
    async getById(req, res) {
       try {
-         const forummessage = await forumService.getById(req.params.id)
+         const forummessage = await forumService.getById(req.params.id, req.query)
          return res.json(forummessage)
       } catch (e) {
          res.status(500).json(e)
