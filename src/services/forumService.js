@@ -1,12 +1,14 @@
 import ForumMessage from "../models/ForumMessage.js";
+import ForumComment from "../models/ForumComment.js";
 
 class ForumService {
    async getAll(params) {
-      const userLogin = params.userId;
+      const userId = params.userId;
       const excludeId = params || "";
       const limit = +params.limit || 0;
       const page = +params.page || 1;
       const query = {};
+      const sort = params.sortByDate ? { datetime: -1 } : {};
 
       if (params.search) {
          const searchString = params.search;
@@ -26,7 +28,8 @@ class ForumService {
          forummessages = await ForumMessage.find(query)
             .limit(limit)
             .skip((page - 1) * limit)
-            .populate("userId", "login");
+            .populate("userId", "login")
+            .sort(sort);
          forummessages = forummessages.map((forummessage) => ({
             ...forummessage._doc,
             userId: forummessage.userId._id,
@@ -35,7 +38,8 @@ class ForumService {
       } else {
          forummessages = await ForumMessage.find(query)
             .limit(limit)
-            .skip((page - 1) * limit);
+            .skip((page - 1) * limit)
+            .sort(sort);
       }
 
       const totalCount = await ForumMessage.countDocuments(query);
@@ -72,6 +76,48 @@ class ForumService {
       await forummessage.save();
       return forummessage;
    }
+
+   async createComment(body, datetime) {
+      const {userId, forummessageId, text} = body
+      const forumcomment = new ForumComment({userId, forummessageId, text, datetime});
+      await forumcomment.save();
+      return forumcomment;
+   }
+
+   async getAllComments(queryParams, params) {
+      const userLogin = queryParams.userLogin
+      const forummessageId = params.id
+      const limit = +queryParams.limit || 0;
+      const page = +queryParams.page || 1;
+      const sort = queryParams.sortByDate ? { datetime: -1 } : {};
+      const query = {forummessageId};
+
+      let forumcomments;
+
+      if (userLogin) {
+         forumcomments = await ForumComment.find(query)
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .populate("userId", "login")
+            .sort(sort)
+            forumcomments = forumcomments.map((forumcomment) => ({
+            ...forumcomment._doc,
+            userId: forumcomment.userId._id,
+            login: forumcomment.userId.login,
+         }));
+      } else {
+         forumcomments = await ForumComment.find(query)
+            .limit(limit)
+            .skip((page - 1) * limit)
+            .sort(sort)
+      }
+
+      const totalCount = await ForumComment.countDocuments(query);
+
+      return { forumcomments, totalCount };
+   }
+
+
 }
 
 export default new ForumService();
