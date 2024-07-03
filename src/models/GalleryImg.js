@@ -5,7 +5,7 @@ const GalleryImg = new Schema({
    imgLink: { type: String, require: true },
    tags: { type: [String], default: [] },
    userId: { type: Schema.Types.ObjectId, require: true, ref: "User" },
-   datetime: {type: Date, require: true, default: new Date()},
+   datetime: {type: Date, require: true},
    likes: {type: Number, default: 0}
 }, {versionKey: false});
 

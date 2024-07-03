@@ -14,7 +14,8 @@ class GalleryController {
    async create(req, res) {
       try {
          const {title, imgLink, tags, userId} = req.body
-         const image = await galleryService.create({title, imgLink, tags, userId})
+         const datetime = new Date()
+         const image = await galleryService.create({title, imgLink, tags, userId, datetime})
          return res.json(image)
       } catch (e) {
          res.status(500).json(e)
